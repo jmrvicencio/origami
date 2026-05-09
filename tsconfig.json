@@ -11,8 +11,10 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"jsx": "react-jsx"
-		// "types": ["vitest", "@testing-library/jest-dom"]
+		"jsx": "react-jsx",
+		"noEmit": true,
+		"allowImportingTsExtensions": true,
+		"types": ["vitest", "@testing-library/jest-dom", "vite/client"]
 	},
 	"include": ["src", "types", "tests"]
 }
