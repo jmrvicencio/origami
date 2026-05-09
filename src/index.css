@@ -1,1 +1,9 @@
 @import 'tailwindcss';
+
+@theme {
+	--color-folds-900: #0d0a14;
+}
+
+.firebase-emulator-warning {
+	display: none;
+}
