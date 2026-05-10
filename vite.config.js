@@ -11,6 +11,16 @@ export default defineConfig({
 		environment: 'jsdom',
 		setupFiles: './tests/setup.js',
 	},
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					react: ['react', 'react-dom'],
+					firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+				},
+			},
+		},
+	},
 	resolve: {
 		alias: {
 			// Use ESM-safe resolution for Vite config

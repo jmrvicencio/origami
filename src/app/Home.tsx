@@ -2,7 +2,7 @@ import { auth, provider } from '@/lib/firebase/auth.ts';
 import { getAdditionalUserInfo, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, User } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from './routes.tsx';
+import { ROUTES } from '@/app/Routes.tsx';
 import { FirebaseError } from 'firebase/app';
 import { toast } from 'react-hot-toast';
 
@@ -27,7 +27,7 @@ const Home = () => {
 			console.log(result.user);
 			console.log(idp);
 
-			nav(ROUTES.APP);
+			nav(`/${ROUTES.APP}`);
 		} catch (err) {
 			const error = err as FirebaseError;
 			console.error(error);
