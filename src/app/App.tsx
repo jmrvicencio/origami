@@ -2,13 +2,17 @@ import { useWidthCheck } from '@/hooks/useWidthCheck.ts';
 import { appWidthAtom } from '@/store/screenWidth.ts';
 import { Provider, useAtomValue } from 'jotai';
 import { ReactNode, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useNav } from '@/hooks/useNav.ts';
 
 // images
 import Logo from '/LogoWhite.svg';
 import { ROUTES } from './Routes.tsx';
 import { auth } from '@/lib/firebase/auth.ts';
+import { Plus } from 'lucide-react';
+// import AccountIcon from '/icons/account.svg?react';
+import BudgetIcon from '@/resources/icons/budget.svg?react';
+import AccountIcon from '@/resources/icons/account.svg?react';
 
 //region Sidebar Item
 const SideBarItem = ({
@@ -23,7 +27,8 @@ const SideBarItem = ({
 	return (
 		<div
 			onClick={handleClick}
-			className={`${active && 'active'} [.active]:bg-folds-700 hover:bg-folds-700/50 cursor-pointer px-4 py-3`}
+			className={`${active && 'active'} [.active]:bg-folds-700 hover:bg-folds-700/50 cursor-pointer
+				px-4 py-3`}
 		>
 			{children}
 		</div>
@@ -76,6 +81,53 @@ const Sidebar = () => {
 	);
 };
 
+const FAB = () => {
+	const location = useLocation();
+
+	const onBudget = location.pathname == ROUTES.BUDGET;
+	const onGroups = location.pathname.includes(ROUTES.GROUPS);
+
+	return (
+		<div
+			className="bg-folds-900 border-folds-700 absolute bottom-4 flex flex-row items-center gap-4
+				overflow-hidden rounded-full border px-6 py-1 left-1/2 -translate-x-1/2"
+		>
+			<Link to={ROUTES.BUDGET}>
+				<div className={`${onBudget && 'active'} group relative`}>
+					<BudgetIcon
+						width={24}
+						className={`group-[.active]:fill-white fill-muted-folds-300 transition-colors
+							duration-100 ease-in-out`}
+					/>
+					<div
+						className="group-[.active]:translate-y-0.5 translate-y-8 transition-transform absolute
+							h-1 w-1 rounded-full bg-muted-folds-300 left-1/2 -translate-x-1/2"
+					/>
+				</div>
+			</Link>
+			<div
+				className="bg-folds-300 flex aspect-square h-10 w-10 cursor-pointer items-center
+					justify-center rounded-full"
+			>
+				<Plus className="text-folds-900" />
+			</div>
+			<Link to={ROUTES.GROUPS}>
+				<div className={`${onGroups && 'active'} group relative`}>
+					<AccountIcon
+						width={24}
+						className={`group-[.active]:fill-white fill-muted-folds-300 transition-colors
+							duration-100 ease-in-out`}
+					/>
+					<div
+						className="group-[.active]:translate-y-0.5 translate-y-8 transition-transform absolute
+							h-1 w-1 rounded-full bg-muted-folds-300 left-1/2 -translate-x-1/2"
+					/>
+				</div>
+			</Link>
+		</div>
+	);
+};
+
 //region App
 const App = () => {
 	useWidthCheck();
@@ -85,20 +137,25 @@ const App = () => {
 	const { isMd, isLg, isXl } = useAtomValue(appWidthAtom);
 
 	useEffect(() => {
-		if (location.pathname === ROUTES.APP || location.pathname === `${ROUTES.APP}/`) nav(ROUTES.BUDGET);
+		if (location.pathname === ROUTES.APP || location.pathname === `${ROUTES.APP}/`)
+			nav(ROUTES.BUDGET);
 	}, [location]);
 
 	return (
-		<div className="bg-folds-900 from-accent-500/30 to-accent-500/0 h-dvh w-dvw overflow-hidden bg-radial-[at_5%_-24%] to-60%">
+		<div
+			className="bg-folds-900 from-accent-500/30 to-accent-500/0 h-dvh w-dvw overflow-hidden
+				bg-radial-[at_5%_-24%] to-60%"
+		>
 			{/* Default container, Set default values */}
 			<div className="font-quicksand flex h-full w-full overflow-auto text-white">
-				{!isMd && <Sidebar />}
+				{isMd && <Sidebar />}
 				<main className="flex h-2000 grow justify-center justify-self-center align-middle">
-					<div className="border-folds-700 flex w-full max-w-220 flex-col border-x px-12">
+					<div className="border-folds-700 flex w-full max-w-220 flex-col px-4 md:border-x lg:px-12">
 						<Outlet />
 					</div>
 				</main>
-				{!isXl && <div className="w-60"></div>}
+				{isXl && <div className="w-60"></div>}
+				{!isMd && <FAB />}
 			</div>
 		</div>
 	);

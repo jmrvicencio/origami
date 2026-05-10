@@ -37,7 +37,8 @@ const DatePicker = () => {
 			<div className="flex h-10 w-fit items-center justify-center">
 				<div
 					onClick={handleDateChevronClicked(-1)}
-					className="border-muted-folds-300 px flex h-full cursor-pointer items-center justify-center rounded-full border"
+					className="border-muted-folds-300 px flex h-full cursor-pointer items-center
+						justify-center rounded-full border"
 				>
 					<ChevronLeft />
 				</div>
@@ -46,7 +47,8 @@ const DatePicker = () => {
 				</h2>
 				<div
 					onClick={handleDateChevronClicked(1)}
-					className="border-muted-folds-300 px flex h-full cursor-pointer items-center justify-center rounded-full border"
+					className="border-muted-folds-300 px flex h-full cursor-pointer items-center
+						justify-center rounded-full border"
 				>
 					<ChevronRight />
 				</div>
@@ -62,7 +64,6 @@ const Budget = () => {
 	const setNavFinished = useSetAtom(navigationFinishedAtom);
 
 	useEffect(() => {
-		console.log('location changed');
 		setNavFinished(true);
 	}, [location]);
 
@@ -70,11 +71,15 @@ const Budget = () => {
 		<div className="flex max-w-200 flex-col gap-8 py-8">
 			<DatePicker />
 			<section
-				className="border-folds-700 flex items-center justify-between rounded-3xl border bg-cover bg-center px-4 py-2 select-none"
+				className="border-folds-700 flex items-center justify-between rounded-3xl border bg-cover
+					bg-center px-4 py-2 select-none"
 				style={{ backgroundImage: `url('${Header}')` }}
 			>
 				<p className="text-xl font-medium">To Budget</p>
-				<div className="bg-folds-300 text-folds-900 flex w-40 flex-col items-center gap-0 rounded-2xl py-1.5 text-center">
+				<div
+					className="bg-folds-300 text-folds-900 flex w-40 flex-col items-center gap-0 rounded-2xl
+						py-1.5 text-center"
+				>
 					<p className="text-sm leading-4 font-medium">Available</p>
 					<p className="text-sm font-bold">1,000,000</p>
 				</div>

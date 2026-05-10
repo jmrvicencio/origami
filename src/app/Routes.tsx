@@ -6,12 +6,14 @@ export const PATH = {
 	HOME: 'home',
 	APP: 'app',
 	BUDGET: 'budget',
+	GROUPS: 'groups',
 };
 
 export const ROUTES = {
 	HOME: `/${PATH.HOME}`,
 	APP: `/${PATH.APP}`,
 	BUDGET: `/${PATH.APP}/${PATH.BUDGET}`,
+	GROUPS: `/${PATH.APP}/${PATH.GROUPS}`,
 };
 
 const router = createHashRouter([
@@ -47,6 +49,16 @@ const router = createHashRouter([
 				children: [
 					{
 						path: PATH.BUDGET,
+						loader: async () => {
+							await setTimeout(() => {}, 1000);
+						},
+						lazy: async () => {
+							let Budget = await import('@/app/routes/Budget.tsx');
+							return { Component: Budget.default };
+						},
+					},
+					{
+						path: PATH.GROUPS,
 						loader: async () => {
 							await setTimeout(() => {}, 1000);
 						},
