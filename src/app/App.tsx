@@ -1,8 +1,8 @@
 import { useWidthCheck } from '@/hooks/useWidthCheck.ts';
 import { appWidthAtom } from '@/store/screenWidth.ts';
-import { Provider, useAtomValue } from 'jotai';
+import { Provider, useAtomValue, useSetAtom } from 'jotai';
 import { ReactNode, useEffect } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useNav } from '@/hooks/useNav.ts';
 
 // images
@@ -13,6 +13,8 @@ import { Plus } from 'lucide-react';
 // import AccountIcon from '/icons/account.svg?react';
 import BudgetIcon from '@/resources/icons/budget.svg?react';
 import AccountIcon from '@/resources/icons/account.svg?react';
+import NavLink from '@/components/NavLink.tsx';
+import { navigatingAtom } from '@/store/store.ts';
 
 //region Sidebar Item
 const SideBarItem = ({
@@ -37,6 +39,7 @@ const SideBarItem = ({
 
 //region Sidebar
 const Sidebar = () => {
+	const setNavigating = useSetAtom(navigatingAtom);
 	const nav = useNav();
 
 	const handleLogoutClicked = () => {
@@ -51,11 +54,15 @@ const Sidebar = () => {
 				<h3 className="font-rubik text-lg font-bold">My Budget</h3>
 			</div>
 			<div className="flex flex-col pt-2 font-bold">
-				<SideBarItem active>Budget</SideBarItem>
+				<NavLink to={ROUTES.BUDGET}>
+					<SideBarItem active>Budget</SideBarItem>
+				</NavLink>
 				<SideBarItem onClick={handleLogoutClicked}>Logout</SideBarItem>
 			</div>
 			<div className="pt-8">
-				<h4 className="text-folds-200 px-4 text-sm">All Acounts</h4>
+				<NavLink to={ROUTES.ACCOUNTS}>
+					<h4 className="text-folds-200 px-4 text-sm hover:underline">All Acounts</h4>
+				</NavLink>
 				<div className="border-folds-700 mt-3 flex flex-col border-t">
 					<SideBarItem>
 						<div>
@@ -81,18 +88,20 @@ const Sidebar = () => {
 	);
 };
 
+//region FAB
+
 const FAB = () => {
 	const location = useLocation();
 
 	const onBudget = location.pathname == ROUTES.BUDGET;
-	const onGroups = location.pathname.includes(ROUTES.GROUPS);
+	const onAccounts = location.pathname.includes(ROUTES.ACCOUNTS);
 
 	return (
 		<div
 			className="bg-folds-900 border-folds-700 absolute bottom-4 left-1/2 flex -translate-x-1/2
 				flex-row items-center gap-4 overflow-hidden rounded-full border px-6 py-1"
 		>
-			<Link to={ROUTES.BUDGET}>
+			<NavLink to={ROUTES.BUDGET}>
 				<div className={`${onBudget && 'active'} group relative`}>
 					<BudgetIcon
 						width={24}
@@ -104,15 +113,15 @@ const FAB = () => {
 							rounded-full transition-transform group-[.active]:translate-y-0.5"
 					/>
 				</div>
-			</Link>
+			</NavLink>
 			<div
 				className="bg-folds-300 flex aspect-square h-10 w-10 cursor-pointer items-center
 					justify-center rounded-full"
 			>
 				<Plus className="text-folds-900" />
 			</div>
-			<Link to={ROUTES.GROUPS}>
-				<div className={`${onGroups && 'active'} group relative`}>
+			<NavLink to={ROUTES.ACCOUNTS}>
+				<div className={`${onAccounts && 'active'} group relative`}>
 					<AccountIcon
 						width={24}
 						className={`fill-muted-folds-300 transition-colors duration-100 ease-in-out
@@ -123,7 +132,7 @@ const FAB = () => {
 							rounded-full transition-transform group-[.active]:translate-y-0.5"
 					/>
 				</div>
-			</Link>
+			</NavLink>
 		</div>
 	);
 };

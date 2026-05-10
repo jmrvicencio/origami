@@ -6,14 +6,14 @@ export const PATH = {
 	HOME: 'home',
 	APP: 'app',
 	BUDGET: 'budget',
-	GROUPS: 'groups',
+	ACCOUNTS: 'accounts',
 };
 
 export const ROUTES = {
 	HOME: `/${PATH.HOME}`,
 	APP: `/${PATH.APP}`,
 	BUDGET: `/${PATH.APP}/${PATH.BUDGET}`,
-	GROUPS: `/${PATH.APP}/${PATH.GROUPS}`,
+	ACCOUNTS: `/${PATH.APP}/${PATH.ACCOUNTS}`,
 };
 
 const router = createHashRouter([
@@ -50,21 +50,23 @@ const router = createHashRouter([
 					{
 						path: PATH.BUDGET,
 						loader: async () => {
-							await setTimeout(() => {}, 1000);
+							appStore.set(navigationFinishedAtom, false);
+							await new Promise((resolve) =>
+								setTimeout(() => {
+									resolve(true);
+								}, 1000),
+							);
 						},
 						lazy: async () => {
-							let Budget = await import('@/app/routes/Budget.tsx');
-							return { Component: Budget.default };
+							const { default: Component } = await import('@/app/routes/Budget.tsx');
+							return { Component };
 						},
 					},
 					{
-						path: PATH.GROUPS,
-						loader: async () => {
-							await setTimeout(() => {}, 1000);
-						},
+						path: PATH.ACCOUNTS,
 						lazy: async () => {
-							let Budget = await import('@/app/routes/Budget.tsx');
-							return { Component: Budget.default };
+							const { default: Component } = await import('@/app/routes/Accounts.tsx');
+							return { Component };
 						},
 					},
 				],

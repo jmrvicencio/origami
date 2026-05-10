@@ -1,20 +1,25 @@
 import { navigatingAtom, navigationFinishedAtom } from '@/store/store.ts';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { motion, useAnimationControls } from 'motion/react';
 
 const LoadingBar = () => {
+	const location = useLocation();
 	const [navigating, setNavigating] = useAtom(navigatingAtom);
-	const [finished, setFinished] = useAtom(navigationFinishedAtom);
+	const [finished, _] = useAtom(navigationFinishedAtom);
 	const controls = useAnimationControls();
+
+	useEffect(() => {
+		setNavigating(true);
+	}, [location]);
 
 	useEffect(() => {
 		controls.set({ width: '0%' });
 	}, []);
 
 	useEffect(() => {
-		console.log(finished + ': finish state');
+		// console.log(finished + ': finish state');
 		if (navigating == false) return;
 
 		if (finished == false) {
