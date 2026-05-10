@@ -1,14 +1,17 @@
 import { auth, provider } from '@/lib/firebase/auth.ts';
 import { getAdditionalUserInfo, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, User } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/app/Routes.tsx';
 import { FirebaseError } from 'firebase/app';
 import { toast } from 'react-hot-toast';
+import { useNav } from '@/hooks/useNav.ts';
+import { useSetAtom } from 'jotai';
+import { navigationFinishedAtom } from '@/store/store.ts';
 
 const Home = () => {
-	const nav = useNavigate();
+	const nav = useNav();
 	const [user, setUser] = useState<User | null>(null);
+	const setNavigationFinished = useSetAtom(navigationFinishedAtom);
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -17,6 +20,10 @@ const Home = () => {
 
 		return unsubscribe;
 	}, [auth]);
+
+	useEffect(() => {
+		setNavigationFinished(true);
+	}, []);
 
 	const handleSignInClicked = async () => {
 		try {

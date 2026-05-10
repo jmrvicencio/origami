@@ -1,3 +1,5 @@
+import LoadingBar from '@/components/LoadingBar.tsx';
+import { appStore, navigationFinishedAtom } from '@/store/store.ts';
 import { createHashRouter, Navigate } from 'react-router-dom';
 
 export const PATH = {
@@ -15,6 +17,7 @@ export const ROUTES = {
 const router = createHashRouter([
 	{
 		path: '/',
+		element: <LoadingBar />,
 		children: [
 			{
 				index: true,
@@ -29,6 +32,14 @@ const router = createHashRouter([
 			},
 			{
 				path: PATH.APP,
+				loader: async () => {
+					appStore.set(navigationFinishedAtom, false);
+					await new Promise((resolve) =>
+						setTimeout(() => {
+							resolve(true);
+						}, 1000),
+					);
+				},
 				lazy: async () => {
 					let App = await import('@/app/App.tsx');
 					return { Component: App.default };
@@ -36,6 +47,9 @@ const router = createHashRouter([
 				children: [
 					{
 						path: PATH.BUDGET,
+						loader: async () => {
+							await setTimeout(() => {}, 1000);
+						},
 						lazy: async () => {
 							let Budget = await import('@/app/routes/Budget.tsx');
 							return { Component: Budget.default };
