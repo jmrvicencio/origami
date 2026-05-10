@@ -60,19 +60,19 @@ const Sidebar = () => {
 					<SideBarItem>
 						<div>
 							<p className="font-bold">Primary Account</p>
-							<p className="text-folds-200 text-sm font-extralight">₱50,000</p>
+							<p className="text-folds-200 font-extralight">₱50,000</p>
 						</div>
 					</SideBarItem>
 					<SideBarItem>
 						<div>
-							<p className="font-bold">Primary Account</p>
-							<p className="text-folds-200 text-sm font-extralight">₱50,000</p>
+							<p className="font-bold">Secondary Account</p>
+							<p className="text-folds-200 font-extralight">₱50,000</p>
 						</div>
 					</SideBarItem>
 					<SideBarItem>
 						<div>
-							<p className="font-bold">Primary Account</p>
-							<p className="text-folds-200 text-sm font-extralight">₱50,000</p>
+							<p className="font-bold">E-Wallet</p>
+							<p className="text-folds-200 font-extralight">₱50,000</p>
 						</div>
 					</SideBarItem>
 				</div>

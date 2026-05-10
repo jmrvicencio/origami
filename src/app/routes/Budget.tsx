@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { addMonths, format } from 'date-fns';
 import { ChevronDown, ChevronLeft, ChevronRight, ListFilter, Plus } from 'lucide-react';
 
@@ -43,7 +43,10 @@ const DatePicker = () => {
 				>
 					<ChevronLeft />
 				</div>
-				<h2 className="font-rubik font-norma4 mx-4 w-34 text-center text-2xl select-none">
+				<h2
+					data-testid="date-display"
+					className="font-rubik font-norma4 mx-4 w-34 text-center text-2xl select-none"
+				>
 					{month} <span className="text-folds-300 font-bold">{year}</span>
 				</h2>
 				<div
@@ -53,6 +56,27 @@ const DatePicker = () => {
 				>
 					<ChevronRight />
 				</div>
+			</div>
+		</section>
+	);
+};
+
+//region Budget Header
+
+const BudgetHeader = () => {
+	return (
+		<section
+			className="border-folds-700 flex items-center justify-between rounded-3xl border bg-cover
+				bg-center px-4 py-2 select-none"
+			style={{ backgroundImage: `url('${Header}')` }}
+		>
+			<p className="text-xl font-medium">To Budget</p>
+			<div
+				className="bg-folds-300 text-folds-900 flex w-40 flex-col items-center gap-0 rounded-2xl
+					py-1.5 text-center text-base md:py-2 md:text-xl"
+			>
+				<p className="leading-4 font-medium md:leading-5">Available</p>
+				<p className="text-lg font-bold">1,000,000</p>
 			</div>
 		</section>
 	);
@@ -105,25 +129,12 @@ const Budget = () => {
 	return (
 		<div className="flex max-w-200 flex-col gap-6 py-8">
 			<DatePicker />
-			<section
-				className="border-folds-700 flex items-center justify-between rounded-3xl border bg-cover
-					bg-center px-4 py-2 select-none"
-				style={{ backgroundImage: `url('${Header}')` }}
-			>
-				<p className="text-xl font-medium">To Budget</p>
-				<div
-					className="bg-folds-300 text-folds-900 flex w-40 flex-col items-center gap-0 rounded-2xl
-						py-1.5 text-center text-sm md:py-2 md:text-xl"
-				>
-					<p className="leading-4 font-medium md:leading-5">Available</p>
-					<p className="font-bold">1,000,000</p>
-				</div>
-			</section>
+			<BudgetHeader />
 			<section>
 				<div className="flex flex-row justify-between px-3">
 					<div>
-						<h2 className="font-bold">Folds</h2>
-						<p className="text-folds-200 text-sm font-light">Organize your Budget</p>
+						<h2 className="text-lg font-bold">Folds</h2>
+						<p className="text-folds-200 font-light">Organize your Budget</p>
 					</div>
 					<div className="flex items-end gap-3">
 						<ThumbButton>
