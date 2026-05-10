@@ -1,9 +1,10 @@
 import { useWidthCheck } from '@/hooks/useWidthCheck.ts';
 import { appWidthAtom } from '@/store/screenWidth.ts';
 import { Provider, useAtomValue, useSetAtom } from 'jotai';
-import { ReactNode, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { ReactNode, useEffect, useState } from 'react';
+import { Outlet, useLocation, useOutlet } from 'react-router-dom';
 import { useNav } from '@/hooks/useNav.ts';
+import { easeInOut, motion } from 'motion/react';
 
 // images
 import Logo from '/LogoWhite.svg';
@@ -15,6 +16,8 @@ import BudgetIcon from '@/resources/icons/budget.svg?react';
 import AccountIcon from '@/resources/icons/account.svg?react';
 import NavLink from '@/components/NavLink.tsx';
 import { navigatingAtom } from '@/store/store.ts';
+import { AnimatePresence } from 'motion/react';
+import { usePageTurn } from '@/hooks/usePageTurn.ts';
 
 //region Sidebar Item
 const SideBarItem = ({
@@ -39,8 +42,12 @@ const SideBarItem = ({
 
 //region Sidebar
 const Sidebar = () => {
-	const setNavigating = useSetAtom(navigatingAtom);
+	const { turnPage } = usePageTurn();
+	const location = useLocation();
 	const nav = useNav();
+
+	const onBudget = location.pathname == ROUTES.BUDGET;
+	const onAccounts = location.pathname.includes(ROUTES.ACCOUNTS);
 
 	const handleLogoutClicked = () => {
 		auth.signOut();
@@ -55,7 +62,7 @@ const Sidebar = () => {
 			</div>
 			<div className="flex flex-col pt-2 font-bold">
 				<NavLink to={ROUTES.BUDGET}>
-					<SideBarItem active>Budget</SideBarItem>
+					<SideBarItem active={onBudget}>Budget</SideBarItem>
 				</NavLink>
 				<SideBarItem onClick={handleLogoutClicked}>Logout</SideBarItem>
 			</div>
@@ -91,6 +98,7 @@ const Sidebar = () => {
 //region FAB
 
 const FAB = () => {
+	const { turnPage } = usePageTurn();
 	const location = useLocation();
 
 	const onBudget = location.pathname == ROUTES.BUDGET;
@@ -101,7 +109,7 @@ const FAB = () => {
 			className="bg-folds-900 border-folds-700 absolute bottom-4 left-1/2 flex -translate-x-1/2
 				flex-row items-center gap-4 overflow-hidden rounded-full border px-6 py-1"
 		>
-			<NavLink to={ROUTES.BUDGET}>
+			<NavLink to={ROUTES.BUDGET} onClick={() => turnPage('right')}>
 				<div className={`${onBudget && 'active'} group relative`}>
 					<BudgetIcon
 						width={24}
@@ -120,7 +128,7 @@ const FAB = () => {
 			>
 				<Plus className="text-folds-900" />
 			</div>
-			<NavLink to={ROUTES.ACCOUNTS}>
+			<NavLink to={ROUTES.ACCOUNTS} onClick={() => turnPage('left')}>
 				<div className={`${onAccounts && 'active'} group relative`}>
 					<AccountIcon
 						width={24}
@@ -139,11 +147,15 @@ const FAB = () => {
 
 //region App
 const App = () => {
+	// Hooks
 	useWidthCheck();
-
+	const { start, exit, animate, turnPage } = usePageTurn();
+	const { isMd, isXl } = useAtomValue(appWidthAtom);
 	const nav = useNav();
 	const location = useLocation();
-	const { isMd, isLg, isXl } = useAtomValue(appWidthAtom);
+
+	// Computed
+	const element = useOutlet();
 
 	useEffect(() => {
 		if (location.pathname === ROUTES.APP || location.pathname === `${ROUTES.APP}/`)
@@ -156,17 +168,25 @@ const App = () => {
 				bg-radial-[at_5%_-24%] to-60%"
 		>
 			{/* Default container, Set default values */}
-			<div className="font-quicksand flex h-full w-full overflow-auto text-white">
+			<div className="font-quicksand flex h-full w-full overflow-auto overflow-x-clip text-white">
 				{isMd && <Sidebar />}
 				<main className="flex h-2000 grow justify-center justify-self-center align-middle">
-					<div
-						className="border-folds-700 flex w-full max-w-220 flex-col px-2 sm:px-4 md:border-x
-							lg:px-12"
-					>
-						<Outlet />
+					<div className="border-folds-700 relative w-full max-w-220 md:border-x">
+						<AnimatePresence onExitComplete={() => turnPage('none')}>
+							<motion.div
+								key={location.pathname}
+								exit={exit}
+								animate={animate}
+								initial={start}
+								transition={{ ease: easeInOut, type: 'tween' }}
+								className="absolute flex w-full flex-col px-2 sm:px-4 lg:px-12"
+							>
+								{element}
+							</motion.div>
+						</AnimatePresence>
 					</div>
 				</main>
-				{isXl && <div className="w-60"></div>}
+				{isXl && <div className="w-60"></div> /* Filler element */}
 				{!isMd && <FAB />}
 			</div>
 		</div>

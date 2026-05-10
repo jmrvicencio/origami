@@ -1,14 +1,17 @@
 import { ReactNode, useEffect } from 'react';
-import { addMonths, format } from 'date-fns';
-import { ChevronDown, ChevronLeft, ChevronRight, ListFilter, Plus } from 'lucide-react';
-
-// Images
-import Header from '/budget/header.jpg';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { dateAtom } from '@/store/budget.ts';
+import { addMonths, format } from 'date-fns';
 import { useLocation } from 'react-router-dom';
 import { navigationFinishedAtom } from '@/store/store.ts';
+import { motion } from 'motion/react';
+
+// Images
+import { ChevronDown, ChevronLeft, ChevronRight, ListFilter, Plus } from 'lucide-react';
+import Header from '/budget/header.jpg';
 import { EllipsisVertical } from 'lucide-react';
+import { appWidthAtom } from '@/store/screenWidth.ts';
+import { usePageTurn } from '@/hooks/usePageTurn.ts';
 
 //region Date Picker
 
@@ -127,7 +130,7 @@ const Budget = () => {
 	}, [location]);
 
 	return (
-		<div className="flex max-w-200 flex-col gap-6 py-8">
+		<motion.div key="budget" className="flex w-full max-w-200 flex-col gap-6 py-8">
 			<DatePicker />
 			<BudgetHeader />
 			<section>
@@ -156,7 +159,7 @@ const Budget = () => {
 					<FoldGroup></FoldGroup>
 				</div>
 			</section>
-		</div>
+		</motion.div>
 	);
 };
 

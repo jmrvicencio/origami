@@ -49,14 +49,14 @@ const router = createHashRouter([
 				children: [
 					{
 						path: PATH.BUDGET,
-						loader: async () => {
-							appStore.set(navigationFinishedAtom, false);
-							await new Promise((resolve) =>
-								setTimeout(() => {
-									resolve(true);
-								}, 1000),
-							);
-						},
+						// loader: async () => {
+						// 	appStore.set(navigationFinishedAtom, false);
+						// 	await new Promise((resolve) =>
+						// 		setTimeout(() => {
+						// 			resolve(true);
+						// 		}, 1000),
+						// 	);
+						// },
 						lazy: async () => {
 							const { default: Component } = await import('@/app/routes/Budget.tsx');
 							return { Component };

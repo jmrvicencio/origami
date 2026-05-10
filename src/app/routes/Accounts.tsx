@@ -1,6 +1,7 @@
 import { navigationFinishedAtom } from '@/store/store.ts';
 import { useSetAtom } from 'jotai';
 import { useEffect } from 'react';
+import { motion } from 'motion/react';
 
 const Accounts = () => {
 	const setNavFinished = useSetAtom(navigationFinishedAtom);
@@ -11,7 +12,7 @@ const Accounts = () => {
 
 	return (
 		<>
-			<div>Accounts Page</div>
+			<motion.div>Accounts Page</motion.div>
 		</>
 	);
 };

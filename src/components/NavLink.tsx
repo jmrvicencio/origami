@@ -4,11 +4,21 @@ import { useSetAtom } from 'jotai';
 import { MouseEvent, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const NavLink = ({ to, children }: { to: string; children?: ReactNode }) => {
+const NavLink = ({
+	to,
+	onClick: handleClick,
+	children,
+}: {
+	to: string;
+	onClick?: () => any;
+	children?: ReactNode;
+}) => {
 	const location = useLocation();
 	const setNavigating = useSetAtom(navigatingAtom);
 
 	const handleLinkClicked = (e: MouseEvent) => {
+		if (handleClick) handleClick();
+
 		if (to == location.pathname) {
 			e.preventDefault();
 			e.stopPropagation();
