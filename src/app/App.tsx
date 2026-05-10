@@ -28,7 +28,7 @@ const SideBarItem = ({
 		<div
 			onClick={handleClick}
 			className={`${active && 'active'} [.active]:bg-folds-700 hover:bg-folds-700/50 cursor-pointer
-				px-4 py-3`}
+				rounded-xl px-4 py-3`}
 		>
 			{children}
 		</div>
@@ -89,19 +89,19 @@ const FAB = () => {
 
 	return (
 		<div
-			className="bg-folds-900 border-folds-700 absolute bottom-4 flex flex-row items-center gap-4
-				overflow-hidden rounded-full border px-6 py-1 left-1/2 -translate-x-1/2"
+			className="bg-folds-900 border-folds-700 absolute bottom-4 left-1/2 flex -translate-x-1/2
+				flex-row items-center gap-4 overflow-hidden rounded-full border px-6 py-1"
 		>
 			<Link to={ROUTES.BUDGET}>
 				<div className={`${onBudget && 'active'} group relative`}>
 					<BudgetIcon
 						width={24}
-						className={`group-[.active]:fill-white fill-muted-folds-300 transition-colors
-							duration-100 ease-in-out`}
+						className={`fill-muted-folds-300 transition-colors duration-100 ease-in-out
+							group-[.active]:fill-white`}
 					/>
 					<div
-						className="group-[.active]:translate-y-0.5 translate-y-8 transition-transform absolute
-							h-1 w-1 rounded-full bg-muted-folds-300 left-1/2 -translate-x-1/2"
+						className="bg-muted-folds-300 absolute left-1/2 h-1 w-1 -translate-x-1/2 translate-y-8
+							rounded-full transition-transform group-[.active]:translate-y-0.5"
 					/>
 				</div>
 			</Link>
@@ -115,12 +115,12 @@ const FAB = () => {
 				<div className={`${onGroups && 'active'} group relative`}>
 					<AccountIcon
 						width={24}
-						className={`group-[.active]:fill-white fill-muted-folds-300 transition-colors
-							duration-100 ease-in-out`}
+						className={`fill-muted-folds-300 transition-colors duration-100 ease-in-out
+							group-[.active]:fill-white`}
 					/>
 					<div
-						className="group-[.active]:translate-y-0.5 translate-y-8 transition-transform absolute
-							h-1 w-1 rounded-full bg-muted-folds-300 left-1/2 -translate-x-1/2"
+						className="bg-muted-folds-300 absolute left-1/2 h-1 w-1 -translate-x-1/2 translate-y-8
+							rounded-full transition-transform group-[.active]:translate-y-0.5"
 					/>
 				</div>
 			</Link>
@@ -150,7 +150,10 @@ const App = () => {
 			<div className="font-quicksand flex h-full w-full overflow-auto text-white">
 				{isMd && <Sidebar />}
 				<main className="flex h-2000 grow justify-center justify-self-center align-middle">
-					<div className="border-folds-700 flex w-full max-w-220 flex-col px-4 md:border-x lg:px-12">
+					<div
+						className="border-folds-700 flex w-full max-w-220 flex-col px-2 sm:px-4 md:border-x
+							lg:px-12"
+					>
 						<Outlet />
 					</div>
 				</main>
