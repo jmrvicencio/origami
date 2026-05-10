@@ -9,12 +9,39 @@
 
 	/* colors */
 	--color-folds-200: #dbc0ff;
+	--color-folds-300: #bf90ff;
 	--color-folds-700: #322655;
 	--color-folds-900: #0d0a14;
+
+	--color-muted-folds-300: #7c67a6;
 
 	--color-accent-500: #6241f1;
 }
 
 .firebase-emulator-warning {
 	display: none;
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+	width: 12px;
+}
+
+::-webkit-scrollbar-track {
+	background: #0d0a14;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #5a5077;
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #0d0a14;
+}
+
+/* Firefox */
+* {
+	scrollbar-color: #5a5077 #0d0a14;
+	scrollbar-width: initial;
 }

@@ -27,7 +27,7 @@ const Home = () => {
 			console.log(result.user);
 			console.log(idp);
 
-			nav(`/${ROUTES.APP}`);
+			nav(`/${ROUTES.BUDGET}`);
 		} catch (err) {
 			const error = err as FirebaseError;
 			console.error(error);

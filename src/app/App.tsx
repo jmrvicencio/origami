@@ -2,10 +2,12 @@ import { useWidthCheck } from '@/hooks/useWidthCheck.ts';
 import { appWidthAtom } from '@/store/screenWidth.ts';
 import { appStore } from '@/store/store.ts';
 import { Provider, useAtomValue } from 'jotai';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 // images
 import Logo from '/LogoWhite.svg';
+import { ROUTES } from './Routes.tsx';
 
 //region Sidebar Item
 const SideBarItem = ({ active = false, children }: { active?: boolean; children?: ReactNode }) => {
@@ -58,17 +60,25 @@ const Sidebar = () => {
 //region App
 const App = () => {
 	useWidthCheck();
+
+	const nav = useNavigate();
+	const location = useLocation();
 	const { isMd, isLg, isXl } = useAtomValue(appWidthAtom);
+
+	useEffect(() => {
+		if (location.pathname === ROUTES.APP || location.pathname === `${ROUTES.APP}/`) nav(ROUTES.BUDGET);
+	}, [location]);
 
 	return (
 		<Provider store={appStore}>
 			<div className="bg-folds-900 from-accent-500/30 to-accent-500/0 h-dvh w-dvw overflow-hidden bg-radial-[at_5%_-24%] to-60%">
 				{/* Default container, Set default values */}
-				<div className="font-quicksand flex h-full w-full overflow-scroll text-white">
-					{/* <div className="from-accent-500 to-accent-500/0 absolute h-220 w-550 bg-radial to-70% opacity-30" /> */}
+				<div className="font-quicksand flex h-full w-full overflow-auto text-white">
 					{!isMd && <Sidebar />}
 					<main className="flex h-2000 grow justify-center justify-self-center align-middle">
-						<div className="border-folds-700 w-full max-w-220 border-x"></div>
+						<div className="border-folds-700 flex w-full max-w-220 flex-col border-x px-12">
+							<Outlet />
+						</div>
 					</main>
 					{!isXl && <div className="w-60"></div>}
 				</div>
