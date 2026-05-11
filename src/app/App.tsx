@@ -1,23 +1,23 @@
 import { useWidthCheck } from '@/hooks/useWidthCheck.ts';
 import { appWidthAtom } from '@/store/screenWidth.ts';
-import { Provider, useAtomValue, useSetAtom } from 'jotai';
-import { ReactNode, useEffect, useState } from 'react';
-import { Outlet, useLocation, useOutlet } from 'react-router-dom';
+import { useAtomValue } from 'jotai';
+import { ReactNode, useEffect } from 'react';
+import { useLocation, useOutlet } from 'react-router-dom';
 import { useNav } from '@/hooks/useNav.ts';
-import { easeInOut, motion } from 'motion/react';
+import { motion } from 'motion/react';
+import Modal from '@/components/ui/modal/Modal.tsx';
 
 // images
 import Logo from '/LogoWhite.svg';
 import { ROUTES } from './Routes.tsx';
 import { auth } from '@/lib/firebase/auth.ts';
 import { Plus } from 'lucide-react';
-// import AccountIcon from '/icons/account.svg?react';
 import BudgetIcon from '@/resources/icons/budget.svg?react';
 import AccountIcon from '@/resources/icons/account.svg?react';
-import NavLink from '@/components/NavLink.tsx';
-import { navigatingAtom } from '@/store/store.ts';
+import NavLink from '@/components/navigation/NavLink.tsx';
 import { AnimatePresence } from 'motion/react';
 import { usePageTurn } from '@/hooks/usePageTurn.ts';
+import { ScrollLockAtom } from '@/store/store.ts';
 
 //region Sidebar Item
 const SideBarItem = ({
@@ -151,6 +151,7 @@ const App = () => {
 	useWidthCheck();
 	const { start, exit, animate, turnPage } = usePageTurn();
 	const { isMd, isXl } = useAtomValue(appWidthAtom);
+	const lockScroll = useAtomValue(ScrollLockAtom);
 	const nav = useNav();
 	const location = useLocation();
 
@@ -168,7 +169,11 @@ const App = () => {
 				bg-radial-[at_5%_-24%] to-60%"
 		>
 			{/* Default container, Set default values */}
-			<div className="font-quicksand flex h-full w-full overflow-auto overflow-x-clip text-white">
+			<div
+				className={`${lockScroll && 'scrollLock'} font-quicksand flex h-full w-full overflow-auto
+					overflow-x-clip text-white [.scrollLock]:overflow-hidden`}
+			>
+				<Modal />
 				{isMd && <Sidebar />}
 				<main className="flex h-2000 grow justify-center justify-self-center align-middle">
 					<div className="border-folds-700 relative w-full max-w-220 md:border-x">
@@ -178,7 +183,7 @@ const App = () => {
 								exit={exit}
 								animate={animate}
 								initial={start}
-								transition={{ ease: easeInOut, type: 'tween' }}
+								transition={{ ease: [0, 0, 0.4, 1], type: 'keyframes', duration: 0.25 }}
 								className="absolute flex w-full flex-col px-2 sm:px-4 lg:px-12"
 							>
 								{element}

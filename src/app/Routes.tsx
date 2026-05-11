@@ -1,4 +1,4 @@
-import LoadingBar from '@/components/LoadingBar.tsx';
+import LoadingBar from '@/components/ui/loading/LoadingBar.tsx';
 import { appStore, navigationFinishedAtom } from '@/store/store.ts';
 import { createHashRouter, Navigate } from 'react-router-dom';
 

@@ -1,4 +1,4 @@
-import { pageExitAtom, pageId as pageIdAtom, pageInitAtom, pageStartAtom } from '@/store/store.ts';
+import { pageExitAtom, pageStartAtom } from '@/store/store.ts';
 import { useAtom } from 'jotai';
 import { v4 as uuid } from 'uuid';
 

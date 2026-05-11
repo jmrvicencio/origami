@@ -5,13 +5,13 @@ import { addMonths, format } from 'date-fns';
 import { useLocation } from 'react-router-dom';
 import { navigationFinishedAtom } from '@/store/store.ts';
 import { motion } from 'motion/react';
+import ThumbButton from '@/components/ui/button/ThumbButton.tsx';
 
 // Images
 import { ChevronDown, ChevronLeft, ChevronRight, ListFilter, Plus } from 'lucide-react';
-import Header from '/budget/header.jpg';
 import { EllipsisVertical } from 'lucide-react';
-import { appWidthAtom } from '@/store/screenWidth.ts';
-import { usePageTurn } from '@/hooks/usePageTurn.ts';
+import Header from '/budget/header.jpg';
+import { modalAtom } from '@/components/ui/modal/modalAtom.ts';
 
 //region Date Picker
 
@@ -21,11 +21,6 @@ const DatePicker = () => {
 	// Computed Values
 	const month = format(date, 'MMM');
 	const year = format(date, 'yyyy');
-
-	useEffect(() => {
-		const date = new Date(Date.now());
-		setDate(date);
-	}, []);
 
 	// Event Listeners
 	const updateDate = (step: number) => {
@@ -84,20 +79,6 @@ const BudgetHeader = () => {
 		</section>
 	);
 };
-
-//region Thumb Button
-
-const ThumbButton = ({ children, solid = false }: { children?: ReactNode; solid?: boolean }) => {
-	return (
-		<div
-			className={`${solid && 'solid'} [.solid]:bg-folds-300 [.solid]:border-folds-300
-				border-muted-folds-300 h-fit rounded-full border px-1 py-2`}
-		>
-			{children}
-		</div>
-	);
-};
-
 //region Fold Group
 
 const FoldGroup = () => {
@@ -124,10 +105,25 @@ const FoldGroup = () => {
 const Budget = () => {
 	const location = useLocation();
 	const setNavFinished = useSetAtom(navigationFinishedAtom);
+	const setModal = useSetAtom(modalAtom);
 
 	useEffect(() => {
 		setNavFinished(true);
 	}, [location]);
+
+	const handleOptionsclicked = () => {
+		setModal({
+			type: 'menu',
+			items: [
+				{
+					option: 'Option 1',
+				},
+				{
+					option: 'Option 2',
+				},
+			],
+		});
+	};
 
 	return (
 		<motion.div key="budget" className="flex w-full max-w-200 flex-col gap-6 py-8">
@@ -140,7 +136,7 @@ const Budget = () => {
 						<p className="text-folds-200 font-light">Organize your Budget</p>
 					</div>
 					<div className="flex items-end gap-3">
-						<ThumbButton>
+						<ThumbButton onClick={handleOptionsclicked}>
 							<EllipsisVertical className="h-4 w-4" />
 						</ThumbButton>
 						<ThumbButton>
