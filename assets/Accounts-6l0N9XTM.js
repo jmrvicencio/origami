@@ -1,0 +1,1 @@
+import{u as e,r as n,j as t,q as o,n as r}from"./index-CpM0zTbw.js";import"./react-DJG_os-6.js";const c=()=>{const s=e(r);return n.useEffect(()=>{s(!0)},[]),t.jsx(t.Fragment,{children:t.jsx(o.div,{children:"Accounts Page"})})};export{c as default};
