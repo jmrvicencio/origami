@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { dateAtom } from '@/store/budget.ts';
 import { addMonths, format, differenceInCalendarMonths } from 'date-fns';
@@ -12,30 +12,40 @@ import { ChevronDown, ChevronLeft, ChevronRight, ListFilter, Plus } from 'lucide
 import { EllipsisVertical } from 'lucide-react';
 import Header from '/budget/header.jpg';
 import { modalAtom } from '@/components/ui/modal/modalAtom.ts';
+import { AnchorAlignment, AnchorPositions } from '@/components/ui/modal/modal.types.ts';
 
 //region Date Picker
 
 const DatePicker = () => {
 	const [date, setDate] = useAtom(dateAtom);
+	const [isAnimating, setIsAnimating] = useState(false);
 	const [isLaterDate, setIsLaterDate] = useState(false);
 
 	// Computed Values
 	const month = format(date, 'MMM');
 	const year = format(date, 'yyyy');
 	let currentIsLaterDate = isLaterDate;
+	let currentIsAnimating = isAnimating;
 
 	// Event Listeners
 	const updateDate = (step: number) => {
 		setDate((prev) => {
 			const newDate = addMonths(prev, step);
 			currentIsLaterDate = differenceInCalendarMonths(newDate, prev) > 0;
+			currentIsAnimating = true;
 			setIsLaterDate(currentIsLaterDate);
 			return newDate;
 		});
+		setIsAnimating(true);
 	};
 
 	const handleDateChevronClicked = (step: number) => () => {
 		updateDate(step);
+	};
+
+	const handleAnimationFinished = () => {
+		setIsAnimating(false);
+		console.log('animating');
 	};
 
 	return (
@@ -48,19 +58,35 @@ const DatePicker = () => {
 				>
 					<ChevronLeft />
 				</div>
-				<motion.div
+				<div
 					data-testid="date-display"
 					className="font-rubik relative flex w-38 flex-row justify-center gap-2 overflow-clip px-4
 						text-center text-2xl font-normal select-none"
 				>
-					<AnimatePresence custom={currentIsLaterDate} mode="popLayout">
+					<AnimatePresence
+						custom={[currentIsLaterDate, currentIsAnimating]}
+						mode="popLayout"
+						onExitComplete={handleAnimationFinished}
+					>
 						<motion.h2
-							layout
+							layout={isAnimating}
 							key={month}
-							custom={currentIsLaterDate}
+							custom={[currentIsLaterDate, currentIsAnimating]}
 							variants={{
-								initial: (isLater) => ({ x: isLater ? '120%' : '-120%', opacity: 0 }),
-								exit: (isLater) => ({ x: isLater ? '-120%' : '120%', opacity: 0 }),
+								initial: ([isLater, isAnimate]) =>
+									!isAnimate
+										? {}
+										: {
+												x: `${!isLater ? '-' : ''}120%`,
+												opacity: 0,
+											},
+								exit: ([isLater, isAnimate]) =>
+									!isAnimate
+										? {}
+										: {
+												x: `${isLater ? '-' : ''}120%`,
+												opacity: 0,
+											},
 							}}
 							initial="initial"
 							exit="exit"
@@ -70,12 +96,24 @@ const DatePicker = () => {
 							{month}
 						</motion.h2>
 						<motion.h2
-							layout
+							layout={isAnimating}
 							key={year}
-							custom={currentIsLaterDate}
+							custom={[currentIsLaterDate, currentIsAnimating]}
 							variants={{
-								initial: (isLater) => ({ x: isLater ? '120%' : '-120%', opacity: 0 }),
-								exit: (isLater) => ({ x: isLater ? '-120%' : '120%', opacity: 0 }),
+								initial: ([isLater, isAnimate]) =>
+									!isAnimate
+										? {}
+										: {
+												x: `${!isLater ? '-' : ''}120%`,
+												opacity: 0,
+											},
+								exit: ([isLater, isAnimate]) =>
+									!isAnimate
+										? {}
+										: {
+												x: `${isLater ? '-' : ''}120%`,
+												opacity: 0,
+											},
 							}}
 							initial="initial"
 							exit="exit"
@@ -85,7 +123,7 @@ const DatePicker = () => {
 							{year}
 						</motion.h2>
 					</AnimatePresence>
-				</motion.div>
+				</div>
 				<div
 					onClick={handleDateChevronClicked(1)}
 					className="border-muted-folds-300 bg-folds-900 px z-1 flex h-full cursor-pointer
@@ -142,6 +180,7 @@ const FoldGroup = () => {
 //region Main
 
 const Budget = () => {
+	const elipsisRef = useRef<HTMLElement>(null);
 	const location = useLocation();
 	const setNavFinished = useSetAtom(navigationFinishedAtom);
 	const setModal = useSetAtom(modalAtom);
@@ -161,6 +200,11 @@ const Budget = () => {
 					option: 'Option 2',
 				},
 			],
+			anchor: {
+				ref: elipsisRef,
+				anchor: AnchorPositions.Bottom,
+				alignment: AnchorAlignment.end,
+			},
 		});
 	};
 
@@ -175,7 +219,7 @@ const Budget = () => {
 						<p className="text-folds-200 font-light">Organize your Budget</p>
 					</div>
 					<div className="flex items-end gap-3">
-						<ThumbButton onClick={handleOptionsclicked}>
+						<ThumbButton ref={elipsisRef} onClick={handleOptionsclicked}>
 							<EllipsisVertical className="h-4 w-4" />
 						</ThumbButton>
 						<ThumbButton>

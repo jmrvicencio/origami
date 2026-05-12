@@ -164,36 +164,38 @@ const App = () => {
 	}, [location]);
 
 	return (
-		<div
-			className="bg-folds-900 from-accent-500/30 to-accent-500/0 h-dvh w-dvw overflow-hidden
-				bg-radial-[at_5%_-24%] to-60%"
-		>
+		<div className="bg-folds-900 font-quicksand flex min-h-dvh w-full overflow-x-hidden text-white">
 			{/* Default container, Set default values */}
+			{/* <div
+				className="flex h-full w-full text-white
+					[.scrollLock]:overflow-hidden"
+			> */}
 			<div
-				className={`${lockScroll && 'scrollLock'} font-quicksand flex h-full w-full overflow-auto
-					overflow-x-clip text-white [.scrollLock]:overflow-hidden`}
-			>
-				<Modal />
-				{isMd && <Sidebar />}
-				<main className="flex h-2000 grow justify-center justify-self-center align-middle">
-					<div className="border-folds-700 relative w-full max-w-220 md:border-x">
-						<AnimatePresence onExitComplete={() => turnPage('none')}>
-							<motion.div
-								key={location.pathname}
-								exit={exit}
-								animate={animate}
-								initial={start}
-								transition={{ ease: [0, 0, 0.4, 1], type: 'keyframes', duration: 0.25 }}
-								className="absolute flex w-full flex-col px-2 sm:px-4 lg:px-12"
-							>
-								{element}
-							</motion.div>
-						</AnimatePresence>
-					</div>
-				</main>
-				{isXl && <div className="w-60"></div> /* Filler element */}
-				{!isMd && <FAB />}
-			</div>
+				id="bg-gradient"
+				className="from-accent-500/30 to-accent-500/0 fixed top-0 h-dvh w-dvw bg-radial-[at_5%_-24%]
+					to-60%"
+			/>
+			<Modal />
+			{isMd && <Sidebar />}
+			<main className="flex h-2000 grow justify-center justify-self-center align-middle">
+				<div className="border-folds-700 relative w-full max-w-220 md:border-x">
+					<AnimatePresence onExitComplete={() => turnPage('none')}>
+						<motion.div
+							key={location.pathname}
+							exit={exit}
+							animate={animate}
+							initial={start}
+							transition={{ ease: [0, 0, 0.4, 1], type: 'keyframes', duration: 0.25 }}
+							className="absolute flex w-full flex-col px-2 sm:px-4 lg:px-12"
+						>
+							{element}
+						</motion.div>
+					</AnimatePresence>
+				</div>
+			</main>
+			{isXl && <div className="w-60"></div> /* Filler element */}
+			{!isMd && <FAB />}
+			{/* </div> */}
 		</div>
 	);
 };

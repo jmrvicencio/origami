@@ -1,10 +1,11 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { modalAtom } from './modalAtom.ts';
-import React, { MouseEvent, ReactNode, useEffect } from 'react';
-import { Modal as ModalType } from './modal.types.js';
+import React, { MouseEvent, ReactNode, useEffect, useRef } from 'react';
+import { AnchorAlignment, AnchorPositions, Modal as ModalType } from './modal.types.js';
 import { useModal } from './useModal.ts';
 import { ZINDEX } from '@/config/zindex.ts';
 import { ScrollLockAtom } from '@/store/store.ts';
+import { useScroll } from 'motion/react';
 
 const blockClick = (e: MouseEvent) => {
 	e.stopPropagation();
@@ -14,21 +15,42 @@ const blockClick = (e: MouseEvent) => {
 // region Menu Modal
 
 const MenuModal = ({ modal }: { modal: ModalType }) => {
+	const modalRef = useRef<HTMLDivElement>(null);
+	const { scrollY } = useScroll();
 	const { resetModal } = useModal();
-	const position: React.CSSProperties = {
-		top: '50%',
-		left: '50%',
-		transform: 'translate(-50%, -50%)',
-	};
+
+	let position: React.CSSProperties;
+
+	if (!modal.anchor)
+		position = {
+			top: '50%',
+			left: '50%',
+			transform: 'translate(-50%, -50%)',
+		};
+	else {
+		const anchor = modal.anchor;
+		const offset = anchor.offset ?? 0;
+		const refPos = modal.anchor.ref.current!.getBoundingClientRect();
+
+		console.log(scrollY);
+		position = {
+			top: anchor.anchor == AnchorPositions.Bottom ? refPos.bottom + offset : 0,
+			left: refPos.right - modalRef.current!.getBoundingClientRect().width,
+		};
+	}
+
+	console.log('modal is refreshing');
 
 	return (
 		<div
+			ref={modalRef}
 			onClick={blockClick}
 			className="bg-folds-700 absolute flex w-fit flex-col rounded-2xl px-8"
 			style={{ ...position }}
 		>
-			{modal.items.map((item) => (
+			{modal.items.map((item, i) => (
 				<div
+					key={i}
 					className="cursor-pointer py-2"
 					onClick={() => {
 						item.action?.();
@@ -72,7 +94,7 @@ const Modal = () => {
 
 	return (
 		<div
-			className={`${hasOverlay} [.overlay]:bg-folds-900/80 absolute h-dvh w-dvw`}
+			className={`${hasOverlay} [.overlay]:bg-folds-900/80 absolute h-dvh w-full`}
 			style={{ zIndex: ZINDEX.modal }}
 			onClick={handleOverlayClicked}
 		>
