@@ -1,10 +1,10 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { dateAtom } from '@/store/budget.ts';
-import { addMonths, format } from 'date-fns';
+import { addMonths, format, differenceInCalendarMonths } from 'date-fns';
 import { useLocation } from 'react-router-dom';
 import { navigationFinishedAtom } from '@/store/store.ts';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import ThumbButton from '@/components/ui/button/ThumbButton.tsx';
 
 // Images
@@ -17,14 +17,21 @@ import { modalAtom } from '@/components/ui/modal/modalAtom.ts';
 
 const DatePicker = () => {
 	const [date, setDate] = useAtom(dateAtom);
+	const [isLaterDate, setIsLaterDate] = useState(false);
 
 	// Computed Values
 	const month = format(date, 'MMM');
 	const year = format(date, 'yyyy');
+	let currentIsLaterDate = isLaterDate;
 
 	// Event Listeners
 	const updateDate = (step: number) => {
-		setDate((prev) => addMonths(prev, step));
+		setDate((prev) => {
+			const newDate = addMonths(prev, step);
+			currentIsLaterDate = differenceInCalendarMonths(newDate, prev) > 0;
+			setIsLaterDate(currentIsLaterDate);
+			return newDate;
+		});
 	};
 
 	const handleDateChevronClicked = (step: number) => () => {
@@ -36,21 +43,53 @@ const DatePicker = () => {
 			<div className="flex h-10 w-fit items-center justify-center">
 				<div
 					onClick={handleDateChevronClicked(-1)}
-					className="border-muted-folds-300 px flex h-full cursor-pointer items-center
-						justify-center rounded-full border"
+					className="border-muted-folds-300 bg-folds-900 px z-1 flex h-full cursor-pointer
+						items-center justify-center rounded-full border"
 				>
 					<ChevronLeft />
 				</div>
-				<h2
+				<motion.div
 					data-testid="date-display"
-					className="font-rubik font-norma4 mx-4 w-34 text-center text-2xl select-none"
+					className="font-rubik relative flex w-38 flex-row justify-center gap-2 overflow-clip px-4
+						text-center text-2xl font-normal select-none"
 				>
-					{month} <span className="text-folds-300 font-bold">{year}</span>
-				</h2>
+					<AnimatePresence custom={currentIsLaterDate} mode="popLayout">
+						<motion.h2
+							layout
+							key={month}
+							custom={currentIsLaterDate}
+							variants={{
+								initial: (isLater) => ({ x: isLater ? '120%' : '-120%', opacity: 0 }),
+								exit: (isLater) => ({ x: isLater ? '-120%' : '120%', opacity: 0 }),
+							}}
+							initial="initial"
+							exit="exit"
+							animate={{ x: '0%', opacity: 1 }}
+							className="w-12"
+						>
+							{month}
+						</motion.h2>
+						<motion.h2
+							layout
+							key={year}
+							custom={currentIsLaterDate}
+							variants={{
+								initial: (isLater) => ({ x: isLater ? '120%' : '-120%', opacity: 0 }),
+								exit: (isLater) => ({ x: isLater ? '-120%' : '120%', opacity: 0 }),
+							}}
+							initial="initial"
+							exit="exit"
+							animate={{ x: '0%', opacity: 1 }}
+							className="text-folds-300 font-bold"
+						>
+							{year}
+						</motion.h2>
+					</AnimatePresence>
+				</motion.div>
 				<div
 					onClick={handleDateChevronClicked(1)}
-					className="border-muted-folds-300 px flex h-full cursor-pointer items-center
-						justify-center rounded-full border"
+					className="border-muted-folds-300 bg-folds-900 px z-1 flex h-full cursor-pointer
+						items-center justify-center rounded-full border"
 				>
 					<ChevronRight />
 				</div>

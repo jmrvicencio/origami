@@ -11,7 +11,10 @@ const blockClick = (e: MouseEvent) => {
 	e.preventDefault();
 };
 
+// region Menu Modal
+
 const MenuModal = ({ modal }: { modal: ModalType }) => {
+	const { resetModal } = useModal();
 	const position: React.CSSProperties = {
 		top: '50%',
 		left: '50%',
@@ -25,7 +28,15 @@ const MenuModal = ({ modal }: { modal: ModalType }) => {
 			style={{ ...position }}
 		>
 			{modal.items.map((item) => (
-				<div className="py-2">{item.option}</div>
+				<div
+					className="cursor-pointer py-2"
+					onClick={() => {
+						item.action?.();
+						resetModal();
+					}}
+				>
+					{item.option}
+				</div>
 			))}
 		</div>
 	);
