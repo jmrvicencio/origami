@@ -38,7 +38,7 @@ const LoadingBar = () => {
 	return (
 		<>
 			{navigating && (
-				<div className="bg-folds-700 absolute top-0 z-20 h-1 w-dvw">
+				<div className="bg-folds-700 absolute top-0 z-20 h-1 w-1/1">
 					<motion.div
 						animate={controls}
 						className="bg-folds-300 h-full"
