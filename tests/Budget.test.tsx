@@ -21,6 +21,6 @@ describe('[UNIT] Budget Page', () => {
 		const dateDisplay = screen.getByTestId('date-display');
 
 		expect(dateDisplay).toBeInTheDocument();
-		expect(dateDisplay).toHaveTextContent(format(new Date(Date.now()), 'MMM yyyy'));
+		expect(dateDisplay).toHaveTextContent(format(new Date(Date.now()), 'MMMyyyy'));
 	});
 });
