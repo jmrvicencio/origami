@@ -17,7 +17,7 @@ describe('[UNIT] Budget Page', () => {
 	);
 	const user = userEvent.setup();
 
-	it('test', async () => {
+	it('displays the current Month/Year at the top of the screen', async () => {
 		const dateDisplay = screen.getByTestId('date-display');
 
 		expect(dateDisplay).toBeInTheDocument();
