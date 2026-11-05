@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { collection, onSnapshot, Firestore } from 'firebase/firestore';
+import { collection, Firestore, onSnapshot } from 'firebase/firestore';
 import { Fold } from '../types.ts';
 import { toast } from 'react-hot-toast';
 import { useAtom } from 'jotai';
@@ -10,6 +10,7 @@ export const useFolds = (db: Firestore) => {
 	const [foldsFetched, setFoldsFetched] = useAtom(foldFetchedAtom);
 
 	useEffect(() => {
+		// console.log(foldsFetched);
 		if (!foldsFetched) {
 			const foldsRef = collection(db, 'Folds');
 			const unsub = onSnapshot(
@@ -22,11 +23,12 @@ export const useFolds = (db: Firestore) => {
 					console.error(err);
 				},
 			);
+			// console.log('setting folds fetched');
 			setFoldsFetched(true);
 
 			return unsub;
 		} else {
-			return;
+			return () => {};
 		}
 	}, []);
 
