@@ -10,20 +10,23 @@ export const useFolds = (db: Firestore) => {
 	const [foldsFetched, setFoldsFetched] = useAtom(foldFetchedAtom);
 
 	useEffect(() => {
-		// console.log(foldsFetched);
 		if (!foldsFetched) {
 			const foldsRef = collection(db, 'Folds');
 			const unsub = onSnapshot(
 				foldsRef,
 				(snap) => {
-					setFolds(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Fold));
+					setFolds(
+						snap.docs.reduce<Record<string, Fold>>((acc, curr) => {
+							acc[curr.id] = { id: curr.id, ...curr.data() } as Fold;
+							return acc;
+						}, {}),
+					);
 				},
 				(err) => {
 					toast.error(err.message);
 					console.error(err);
 				},
 			);
-			// console.log('setting folds fetched');
 			setFoldsFetched(true);
 
 			return unsub;

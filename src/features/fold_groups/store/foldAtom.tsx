@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
 import { Fold } from '../types.ts';
 
-export const foldAtom = atom<Fold[]>([]);
+export const foldAtom = atom<Record<string, Fold>>({});
 export const foldFetchedAtom = atom(false);

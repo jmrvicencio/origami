@@ -6,6 +6,8 @@ import { Provider, createStore } from 'jotai';
 import { ReactNode } from 'react';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { Fold } from '@/features/fold_groups/types.ts';
+import { useRemoveFold } from '@/features/fold_groups/api/useRemoveFold.tsx';
+import { useAddFolds } from '@/features/fold_groups/api/useAddFold.tsx';
 
 vi.mock('firebase/firestore', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('firebase/firestore')>();
@@ -26,18 +28,42 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 	<Provider store={store}>{children}</Provider>
 );
 
-describe('[Unit] useFolds hook', async () => {
+describe('[Integration] Folds hooks are working together', async () => {
 	it('onSnapshot is only subscribed to once', async () => {
 		const foldsRef = collection(db, 'Folds');
-		await addDoc(foldsRef, { id: '1', groupId: '1', name: 'Main Group' } as Fold);
-		await addDoc(foldsRef, { id: '2', groupId: '2', name: 'Main Group' } as Fold);
+		const foldData: Fold = { id: '', groupId: '1', name: 'First Group' };
+		const { result: addFold } = renderHook(() => useAddFolds(db), { wrapper });
+
+		const [result1, fold1Id] = await addFold.current.addFold(foldData);
+		const [result2, fold2Id] = await addFold.current.addFold({
+			id: '',
+			groupId: '2',
+			name: 'Second Group',
+		} as Fold);
+
 		const { result: first } = renderHook(() => useFolds(db), { wrapper });
 		const { result: second } = renderHook(() => useFolds(db), { wrapper });
 
 		await waitFor(() => {
-			expect(first.current).toHaveLength(2);
-			expect(second.current).toHaveLength(2);
+			expect(Object.keys(first.current)).toHaveLength(2);
+			expect(Object.keys(second.current)).toHaveLength(2);
+			expect(first.current[fold1Id].name).toBe('First Group');
+			expect(first.current[fold1Id].id).toBe(fold1Id);
+			expect(first.current[fold1Id].groupId).toBe('1');
 			expect(onSnapshotSpy).toHaveBeenCalledTimes(1);
+		});
+
+		const { result: removeFold } = renderHook(() => useRemoveFold(db), { wrapper });
+		await removeFold.current.removeFold(fold1Id);
+
+		await waitFor(() => {
+			expect(Object.keys(first.current)).toHaveLength(1);
+		});
+
+		await removeFold.current.removeFold(fold2Id);
+
+		await waitFor(() => {
+			expect(Object.keys(first.current)).toHaveLength(0);
 		});
 	});
 });
