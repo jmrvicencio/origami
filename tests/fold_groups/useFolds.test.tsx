@@ -3,7 +3,7 @@ import { db } from '../firestore/firestore.tsx';
 import { useFolds } from '@/features/fold_groups/api/useFolds.tsx';
 import { renderHook, waitFor } from '@testing-library/react';
 import { Provider, createStore } from 'jotai';
-import { ReactNode } from 'react';
+import { act, ReactNode } from 'react';
 import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import { Fold } from '@/features/fold_groups/types.ts';
 import { useRemoveFold } from '@/features/fold_groups/api/useRemoveFold.tsx';
@@ -34,12 +34,16 @@ describe('[Integration] Folds hooks are working together', async () => {
 		const foldData: Fold = { id: '', groupId: '1', name: 'First Group' };
 		const { result: addFold } = renderHook(() => useAddFolds(db), { wrapper });
 
-		const [result1, fold1Id] = await addFold.current.addFold(foldData);
-		const [result2, fold2Id] = await addFold.current.addFold({
-			id: '',
-			groupId: '2',
-			name: 'Second Group',
-		} as Fold);
+		let fold1Id: string;
+		let fold2Id: string;
+		await act(async () => {
+			fold1Id = await addFold.current.addFold(foldData);
+			fold2Id = await addFold.current.addFold({
+				id: '',
+				groupId: '2',
+				name: 'Second Group',
+			} as Fold);
+		});
 
 		const { result: first } = renderHook(() => useFolds(db), { wrapper });
 		const { result: second } = renderHook(() => useFolds(db), { wrapper });
@@ -54,13 +58,17 @@ describe('[Integration] Folds hooks are working together', async () => {
 		});
 
 		const { result: removeFold } = renderHook(() => useRemoveFold(db), { wrapper });
-		await removeFold.current.removeFold(fold1Id);
+		await act(async () => {
+			await removeFold.current.removeFold(fold1Id);
+		});
 
 		await waitFor(() => {
 			expect(Object.keys(first.current)).toHaveLength(1);
 		});
 
-		await removeFold.current.removeFold(fold2Id);
+		await act(async () => {
+			await removeFold.current.removeFold(fold2Id);
+		});
 
 		await waitFor(() => {
 			expect(Object.keys(first.current)).toHaveLength(0);
